@@ -16,6 +16,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $role = $request->input('role', 'user');
+
+        if ($role === 'admin' && ! $request->user()->hasRole('admin')) {
+            $role = 'user';
+        }
+
+        $user->assignRole($role);
+
         return response()->json([
             'user' => $user,
             'token' => $user->createToken('auth_token')->plainTextToken,
