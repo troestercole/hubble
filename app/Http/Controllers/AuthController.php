@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Http\Resources\UserResource;
 
 class AuthController extends Controller
 {
@@ -23,9 +24,10 @@ class AuthController extends Controller
         }
 
         $user->assignRole($role);
+        $user->load('roles');
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $user->createToken('auth_token')->plainTextToken,
         ]);
     }
@@ -40,8 +42,10 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $user->load('roles');
+
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $user->createToken('auth_token')->plainTextToken,
         ]);
     }
