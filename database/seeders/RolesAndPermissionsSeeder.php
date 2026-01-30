@@ -24,13 +24,27 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Default User Role
-        Role::create(['name' => 'user']);
+        $user = Role::firstOrCreate(['name' => 'user']);
+        $user->syncPermissions(Permission::all());
 
         // Admin Role
-        Role::create(['name' => 'admin'])->givePermissionTo(Permission::all());
+        $admin = Role::firstOrCreate(['name' => 'admin']);
+        $admin->syncPermissions(Permission::all());
+
+        // Organization Role
+        $organization = Role::firstOrCreate(['name' => 'organization']);
+        $organization->syncPermissions(Permission::all());
+
+        // Organization Admin Role
+        $organizationAdmin = Role::firstOrCreate(['name' => 'organization_admin']);
+        $organizationAdmin->syncPermissions(Permission::all());
+
+        // Organization User Role
+        $organizationUser = Role::firstOrCreate(['name' => 'organization_user']);
+        $organizationUser->syncPermissions(Permission::all());
     }
 }
